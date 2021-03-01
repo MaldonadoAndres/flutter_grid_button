@@ -58,17 +58,21 @@ class GridButton extends StatefulWidget {
   /// ui control disabled
   final bool enabled;
 
-  const GridButton(
-      {Key key,
-      @required this.items,
-      @required this.onPressed,
-      this.borderColor,
-      this.textStyle,
-      this.textDirection,
-      this.borderWidth = 1.0,
-      this.hideSurroundingBorder = false,
-      this.enabled = true})
-      : super(key: key);
+  ///The color used when a the GridButton is Tapped
+  final Color splashColor;
+
+  const GridButton({
+    Key key,
+    @required this.items,
+    @required this.onPressed,
+    this.borderColor,
+    this.textStyle,
+    this.textDirection,
+    this.borderWidth = 1.0,
+    this.hideSurroundingBorder = false,
+    this.enabled = true,
+    this.splashColor,
+  }) : super(key: key);
 
   @override
   _GridButtonState createState() => _GridButtonState();
@@ -79,12 +83,9 @@ class _GridButtonState extends State<GridButton> {
 
   Widget _getButton(int row, int col) {
     GridButtonItem item = widget.items[col][row];
-    TextStyle textStyle =
-        item.textStyle != null ? item.textStyle : widget.textStyle;
-    var noBottomLine =
-        widget.hideSurroundingBorder && widget.items.length == col + 1;
-    var noRightLine =
-        widget.hideSurroundingBorder && widget.items[col].length == row + 1;
+    TextStyle textStyle = item.textStyle != null ? item.textStyle : widget.textStyle;
+    var noBottomLine = widget.hideSurroundingBorder && widget.items.length == col + 1;
+    var noRightLine = widget.hideSurroundingBorder && widget.items[col].length == row + 1;
     return Expanded(
       flex: item.flex,
       child: Container(
@@ -97,14 +98,13 @@ class _GridButtonState extends State<GridButton> {
         child: FlatButton(
           key: item.key,
           color: item.color,
-          splashColor: textStyle?.color?.withOpacity(0.12),
+          splashColor: widget.splashColor ?? textStyle?.color?.withOpacity(0.12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(item.borderRadius),
           ),
           onPressed: (widget.enabled == true)
               ? () {
-                  widget
-                      .onPressed(item.value != null ? item.value : item.title);
+                  widget.onPressed(item.value != null ? item.value : item.title);
                 }
               : null,
           onLongPress: (widget.enabled == true)
@@ -148,8 +148,7 @@ class _GridButtonState extends State<GridButton> {
 
   @override
   Widget build(BuildContext context) {
-    _borderSide = Divider.createBorderSide(context,
-        color: widget.borderColor, width: widget.borderWidth ?? 1.0);
+    _borderSide = Divider.createBorderSide(context, color: widget.borderColor, width: widget.borderWidth ?? 1.0);
     return Container(
       decoration: widget.hideSurroundingBorder
           ? null
